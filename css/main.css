@@ -1,35 +1,90 @@
-html {
-    width: 100%;
-    height: 100%;
-}
 @font-face {
     font-family: nature;
     src: url('Nature.ttf');
 }
+html {
+    width: 100%;
+    height: 100%;
+}
 body {
+    width: 100%;
+    height: 100%;
     background: url(../img/lichenTree.jpg) no-repeat center;
     background-size: cover;
-    text-align: center;
     margin: 0;
     padding: 0;
 }
-#name {
-    background-color: #93cb9a;
-    width: 576px;
-    height: 210px;
-    margin: auto;
-    padding: 20px;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    opacity: .60;
+#titleBar {
+    width: 100%;
     font-family: nature;
-    font-size: 100px;
-    line-height: 100px;
+    text-align: center;
+    background: #005700; /* Old browsers */
+    background: -moz-linear-gradient(top,  #008a00 0%, #007f04 36%, #005700 100%, #002400 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#008a00), color-stop(36%,#007f04), color-stop(100%,#005700), color-stop(100%,#002400)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #008a00 0%,#007f04 36%,#005700 100%,#002400 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #008a00 0%,#007f04 36%,#005700 100%,#002400 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #008a00 0%,#007f04 36%,#005700 100%,#002400 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #008a00 0%,#007f04 36%,#005700 100%,#002400 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#008a00', endColorstr='#002400',GradientType=0 ); /* IE6-9 */
+    z-index: 100;
+}
+#name {
+    font-family: nature;
+    padding-top: 10px;
+    font-size: 46px;
+    display: inline-block;
+    cursor: default;
 }
 #name span {
-    font-family: Verdana;
-    font-size: 10px;
+    font-size: 54px;
+}
+.divider{
+    display: inline-block;
+}
+.navLink {
+    display: inline-block;
+    font-size: 22px;
+    padding-bottom: 10px;
+}
+.navLink:hover {
+    text-shadow: 0px 0px black;
+    cursor: pointer;
+}
+#sections {
     position: relative;
-    top:-75px;
+    top: 10px;
+    width: 95%;
+    margin: auto;
+}
+.section {
+    position: absolute;
+    width: 100%;
+    opacity: 0;
+    background-color: #007F04;
+    padding: 5px;
+    text-align: center;
+}
+.slideUp {
+    -webkit-transition: .2s;
+    -moz-transition: .2s;
+    -ms-transition: .2s;
+    -o-transition: .2s;
+    transition: .2s;
+    top: 0px !important;
+}
+.appear {
+    -webkit-transition: .3s;
+    -moz-transition: .3s;
+    -ms-transition: .3s;
+    -o-transition: .3s;
+    transition: .3s;
+    opacity: 1;
+}
+.disappear {
+    -webkit-transition: .1s;
+    -moz-transition: .1s;
+    -ms-transition: .1s;
+    -o-transition: .1s;
+    transition: .1s;
+    opacity: 0;
 }
