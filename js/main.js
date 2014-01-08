@@ -39,23 +39,23 @@ nameDiv.addEventListener("click", function () {
         sections[i].classList.remove("appear");
         sections[i].classList.add("disappear");
     }
-    if (linkIsOpen) {
-        titleBar.style.top = "0px";
-    }
+//    if (linkIsOpen) {
+//        titleBar.style.top = "0px";
+//    }
     titleBar.classList.remove("slideUp");
-    slide(titleBar, Math.ceil((window.innerHeight / 2) - (titleBar.clientHeight / 2)));
+//    slide(titleBar, Math.ceil((window.innerHeight / 2) - (titleBar.clientHeight / 2)));
     linkIsOpen = false;
     //Force clicks so animation for sliding name down will be faster.
-    nameDiv.click();
-    nameDiv.click();
-    nameDiv.click();
-    nameDiv.click();
-    nameDiv.click();
-    nameDiv.click();
-    nameDiv.click();
-    nameDiv.click();
-    nameDiv.click();
-    nameDiv.click();
+//    nameDiv.click();
+//    nameDiv.click();
+//    nameDiv.click();
+//    nameDiv.click();
+//    nameDiv.click();
+//    nameDiv.click();
+//    nameDiv.click();
+//    nameDiv.click();
+//    nameDiv.click();
+//    nameDiv.click();
 });
 
 for (i = 0; i < navLinks.length; i++) {
