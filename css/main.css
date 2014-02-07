@@ -1,15 +1,10 @@
 @font-face {
-    src: url("Nature.ttf");
-    font-family: nature;
-}
-
-@font-face {
-    src: url("Futura%20Oblique.ttf");
+    src: url("../resources/fonts/FuturaOblique.ttf");
     font-family: futura;
 }
 
 @font-face {
-    src: url("FuturaExtended.ttf");
+    src: url("../resources/fonts/FuturaExtended.ttf");
     font-family: FuturaExtended;
 }
 
@@ -23,7 +18,7 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
-    background: url(../img/lichenTree.jpg) no-repeat center;
+    background: url(../resources/img/lichenTree.jpg) no-repeat center;
     background-size: cover;
     font-family: futura;
 }

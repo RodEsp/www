@@ -38,7 +38,7 @@ nameDiv.addEventListener("click", function () {
     }
     setTimeout(function () {
         titleBar.classList.remove("slideUp");
-    }, 300);
+    }, 200);
     linkIsOpen = false;
 });
 
