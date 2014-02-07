@@ -30,32 +30,16 @@ var slide = function (element, heightCoord) {
             slide(element, heightCoord);
         }
     }, 0);
-
-    return;
 };
 
 nameDiv.addEventListener("click", function () {
     for (i = 0; i < sections.length; i++) {
-        sections[i].classList.remove("appear");
-        sections[i].classList.add("disappear");
+        sections[i].classList.remove("appearTransparent");
     }
-//    if (linkIsOpen) {
-//        titleBar.style.top = "0px";
-//    }
-    titleBar.classList.remove("slideUp");
-//    slide(titleBar, Math.ceil((window.innerHeight / 2) - (titleBar.clientHeight / 2)));
+    setTimeout(function () {
+        titleBar.classList.remove("slideUp");
+    }, 300);
     linkIsOpen = false;
-    //Force clicks so animation for sliding name down will be faster.
-//    nameDiv.click();
-//    nameDiv.click();
-//    nameDiv.click();
-//    nameDiv.click();
-//    nameDiv.click();
-//    nameDiv.click();
-//    nameDiv.click();
-//    nameDiv.click();
-//    nameDiv.click();
-//    nameDiv.click();
 });
 
 for (i = 0; i < navLinks.length; i++) {
@@ -63,17 +47,16 @@ for (i = 0; i < navLinks.length; i++) {
         titleBar.classList.add("slideUp");
 
         for (var j = 0; j < sections.length; j++) {
-            sections[j].classList.remove("appear");
-            sections[j].classList.remove("disappear");
+            sections[j].classList.remove("appearTransparent");
         }
 
-        var section = document.getElementById(this.innerHTML.toLowerCase());
+        var section = document.getElementById(this.innerText.toLowerCase());
         if (!linkIsOpen) {
             setTimeout(function () {
-                section.classList.add("appear");
+                section.classList.add("appearTransparent");
             }, 200);
         } else {
-            section.classList.add("appear");
+            section.classList.add("appearTransparent");
         }
 
         linkIsOpen = true;
