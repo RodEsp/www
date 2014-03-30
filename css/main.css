@@ -76,9 +76,9 @@ body {
 }
 
 #sections {
-    top: 10px;
     width: 95%;
     margin: auto;
+    margin-top: 10px;
     position: relative;
 }
 
