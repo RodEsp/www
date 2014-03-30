@@ -1,0 +1,19 @@
+{
+    "name": "rodesp",
+    "version": "0.1.0",
+    "author": "Rodrigo Espinosa",
+    "description": "A personal website",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/RodEsp/www"
+    },
+    "keywords": [
+        "cli",
+        "http",
+        "server"
+    ],
+    "license": "MIT",
+    "engines": {
+        "node": ">=0.10.25"
+    }
+}
