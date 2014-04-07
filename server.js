@@ -2,7 +2,7 @@
 
 var sys = require('sys'), http = require('http'), fs = require('fs'), url = require('url'), events = require('events');
 
-var DEFAULT_PORT = 7777;
+var DEFAULT_PORT = 8080;
 
 function main(argv) {
     new HttpServer({
