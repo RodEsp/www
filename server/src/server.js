@@ -1,14 +1,18 @@
 #!/usr/bin/env node
 
-var sys = require('sys'), http = require('http'), fs = require('fs'), url = require('url'), events = require('events');
+var sys = require('sys'),
+    http = require('http'),
+    fs = require('fs'),
+    url = require('url'),
+    events = require('events');
 
 var DEFAULT_PORT = 8080;
 
 function main(argv) {
     new HttpServer({
-                       'GET': createServlet(StaticServlet),
-                       'HEAD': createServlet(StaticServlet)
-                   }).start(Number(argv[2]) || DEFAULT_PORT);
+        'GET': createServlet(StaticServlet),
+        'HEAD': createServlet(StaticServlet)
+    }).start(Number(argv[2]) || DEFAULT_PORT);
 }
 
 function escapeHtml(value) {
@@ -62,8 +66,7 @@ HttpServer.prototype.handleRequest_ = function (req, res) {
 /**
  * Handles static content.
  */
-function StaticServlet() {
-}
+function StaticServlet() {}
 
 StaticServlet.MimeMap = {
     'txt': 'text/plain',
@@ -84,7 +87,7 @@ StaticServlet.prototype.handleRequest = function (req, res) {
         return String.fromCharCode(parseInt(hex, 16));
     });
     if (path === "./") {
-        return self.sendFile_(req, res, "./index.html");
+        return self.sendFile_(req, res, "client/src/index.html");
     }
     var parts = path.split('/');
     if (parts[parts.length - 1].charAt(0) === '.') {
@@ -229,5 +232,4 @@ StaticServlet.prototype.writeDirectoryIndex_ = function (req, res, path, files) 
     res.end();
 };
 
-// Must be last,
 main(process.argv);

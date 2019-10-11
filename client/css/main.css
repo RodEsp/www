@@ -18,7 +18,7 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
-    background: url(../resources/img/lichenTree.jpg) no-repeat center;
+    background: url("../resources/img/environment-forest-grass.jpg");
     background-size: cover;
     font-family: futura;
 }

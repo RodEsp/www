@@ -1,19 +1,26 @@
 {
-    "name": "rodesp",
-    "version": "0.1.0",
-    "author": "Rodrigo Espinosa",
-    "description": "A personal website",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/RodEsp/www"
-    },
-    "keywords": [
-        "cli",
-        "http",
-        "server"
-    ],
-    "license": "MIT",
-    "engines": {
-        "node": ">=0.10.25"
-    }
+  "name": "@rodesp/www",
+  "version": "0.1.0",
+  "author": "Rodrigo Espinosa",
+  "description": "My personal website",
+  "homepage": "https://gitlab.com/rodesp/www#readme",
+  "bugs": {
+    "url": "https://gitlab.com/rodesp/www/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/rodesp/www.git"
+  },
+  "license": "CC-BY-NC-ND-4.0",
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "scripts": {
+    "build": "",
+    "start": "node server/src/server.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^6.5.1"
+  }
 }
