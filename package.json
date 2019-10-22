@@ -16,11 +16,15 @@
     "node": ">=10.0.0"
   },
   "scripts": {
-    "build": "",
-    "start": "node server/src/server.js"
+    "build": "webpack && cp src/client/index.html dist/ && cp src/client/css/ dist/ -r && cp src/client/resources/ dist/ -r",
+    "dev": "npm run build && npm start",
+    "start": "node dist/server.js"
   },
   "dependencies": {},
   "devDependencies": {
-    "eslint": "^6.5.1"
+    "eslint": "^6.5.1",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.9",
+    "webpack-node-externals": "^1.7.2"
   }
 }
