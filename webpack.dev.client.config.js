@@ -21,8 +21,10 @@ module.exports = {
 		]
 	},
 	plugins: [
-		new CopyPlugin([
-			{ from: 'src/client', to: '../', ignore: ['*.js'] }
-		]),
+		new CopyPlugin([{
+			from: 'src/client',
+			to: '../',
+			ignore: ['*.js']
+		}]),
 	]
 };
