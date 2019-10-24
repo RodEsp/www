@@ -7,9 +7,11 @@ module.exports = {
 	},
 	output: {
 		path: path.join(__dirname, 'dist/public/js'),
+		publicPath: '/',
 		filename: '[name].js'
 	},
 	target: 'web',
+	mode: 'development',
 	devtool: 'source-map',
 	module: {
 		rules: [

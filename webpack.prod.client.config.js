@@ -11,6 +11,7 @@ module.exports = {
 		filename: '[name].js'
 	},
 	target: 'web',
+	mode: 'production',
 	devtool: 'source-map',
 	module: {
 		rules: [
@@ -22,11 +23,6 @@ module.exports = {
 		]
 	},
 	plugins: [
-		new UglifyJsPlugin({
-			cache: true,
-			parallel: true,
-			sourceMap: true // set to true if you want JS source maps
-		}),
 		new CopyPlugin([{ 
 			from: 'src/client', 
 			to: '../', 
@@ -35,5 +31,10 @@ module.exports = {
 				return Promise.resolve(content);
 			}
 		}]),
+		new UglifyJsPlugin({
+			cache: true,
+			parallel: true,
+			sourceMap: true // set to true if you want JS source maps
+		})
 	]
 };
