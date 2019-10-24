@@ -1,12 +1,12 @@
-var i, //Counter
-	linkIsOpen = false,
-	titleBar = document.getElementById('titleBar'),
-	nameDiv = document.getElementById('name'),
-	navLinks = document.getElementsByClassName('navLink'),
-	sections = document.getElementsByClassName('section');
+let i; //Counter
+let linkIsOpen = false;
+const titleBar = document.getElementById('titleBar');
+const nameDiv = document.getElementById('name');
+const navLinks = document.getElementsByClassName('navLink');
+const sections = document.getElementsByClassName('section');
 
 //Accepts an HTML element object and centers it in the browser window.
-var verticalCenterInBrowser = function (element) {
+const verticalCenterInBrowser = function (element) {
 	element.style.position = 'relative';
 	element.style.top = Math.ceil((window.innerHeight / 2) - (element.clientHeight / 2)).toString() + 'px';
 };
@@ -30,11 +30,11 @@ for (i = 0; i < navLinks.length; i++) {
 	navLinks[i].addEventListener('click', function () {
 		titleBar.classList.add('slideUp');
 
-		for (var j = 0; j < sections.length; j++) {
+		for (let j = 0; j < sections.length; j++) {
 			sections[j].classList.remove('appearTransparent');
 		}
 
-		var section = document.getElementById(this.innerText.toLowerCase());
+		const section = document.getElementById(this.innerText.toLowerCase());
 		if (!linkIsOpen) {
 			setTimeout(function () {
 				section.classList.add('appearTransparent');

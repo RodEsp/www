@@ -16,7 +16,7 @@
     "node": ">=10.0.0"
   },
   "scripts": {
-    "build": "rm -rf dist && mkdir dist && cp src/client/index.html dist/ && cp -r src/client/css dist/ && cp -r src/client/resources dist/ && cp favicon.ico dist/ &&  webpack --mode development",
+    "build": "rm -rf dist && webpack --mode development --config webpack.server.config.js && webpack --mode development --config webpack.client.config.js",
     "dev": "npm run build && npm start",
     "start": "node ./dist/server.js",
     "lint": "eslint **/*.js"
@@ -25,8 +25,13 @@
     "express": "^5.0.0-alpha.7"
   },
   "devDependencies": {
+    "@babel/core": "^7.6.4",
+    "@babel/preset-env": "^7.6.3",
+    "babel-loader": "^8.0.6",
+    "copy-webpack-plugin": "^5.0.4",
     "eslint": "^6.5.1",
     "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.9",
     "webpack-node-externals": "^1.7.2"
   }
 }
