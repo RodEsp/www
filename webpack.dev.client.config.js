@@ -2,17 +2,11 @@ const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
+	devtool: 'source-map',
 	entry: {
 		index: './src/client/js/index.js'
 	},
-	output: {
-		path: path.join(__dirname, 'dist/public/js'),
-		publicPath: '/',
-		filename: '[name].js'
-	},
-	target: 'web',
 	mode: 'development',
-	devtool: 'source-map',
 	module: {
 		rules: [
 			{
@@ -22,11 +16,17 @@ module.exports = {
 			}
 		]
 	},
+	output: {
+		path: path.join(process.cwd(), 'dist/public/js'),
+		publicPath: '/',
+		filename: '[name].js'
+	},
 	plugins: [
 		new CopyPlugin([{
 			from: 'src/client',
 			to: '../',
 			ignore: ['*.js']
 		}]),
-	]
+	],
+	target: 'web'
 };

@@ -5,7 +5,7 @@ build:
   stage: build
   script:
     - npm install --progress=false
-    - npm run build
+    - npm run build-prod
   artifacts:
     expire_in: 1 day
     paths:

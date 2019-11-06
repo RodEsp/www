@@ -23,7 +23,7 @@
     "lint": "eslint **/*.js"
   },
   "dependencies": {
-    "express": "^5.0.0-alpha.7"
+    "express": "^4"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
