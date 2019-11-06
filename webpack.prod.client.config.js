@@ -6,12 +6,7 @@ module.exports = {
 	entry: {
 		index: './src/client/js/index.js'
 	},
-	output: {
-		path: path.join(__dirname, 'dist/public/js'),
-		filename: '[name].js'
-	},
-	target: 'web',
-	devtool: 'source-map',
+	mode: 'production',
 	module: {
 		rules: [
 			{
@@ -21,19 +16,21 @@ module.exports = {
 			}
 		]
 	},
+	output: {
+		path: path.join(process.cwd(), 'dist/public/js'),
+		filename: '[name].js'
+	},
 	plugins: [
+		new CopyPlugin([{ 
+			from: 'src/client', 
+			to: '../', 
+			ignore: ['*.js']
+		}]),
 		new UglifyJsPlugin({
 			cache: true,
 			parallel: true,
 			sourceMap: true // set to true if you want JS source maps
-		}),
-		new CopyPlugin([{ 
-			from: 'src/client', 
-			to: '../', 
-			ignore: ['*.js'],
-			transform(content/*, path*/) {
-				return Promise.resolve(content);
-			}
-		}]),
-	]
+		})
+	],
+	target: 'web'
 };

@@ -23,7 +23,7 @@
     "lint": "eslint **/*.js"
   },
   "dependencies": {
-    "express": "^5.0.0-alpha.7"
+    "express": "^4"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
@@ -34,6 +34,7 @@
     "uglifyjs-webpack-plugin": "^2.2.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.9",
+    "webpack-dev-middleware": "^3.7.2",
     "webpack-node-externals": "^1.7.2"
   }
 }
