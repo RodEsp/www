@@ -1,11 +1,11 @@
 @font-face {
-    src: url("../resources/fonts/FuturaOblique.ttf");
+    src: url("../resources/fonts/Futura.ttf");
     font-family: futura;
 }
 
 @font-face {
     src: url("../resources/fonts/FuturaExtended.ttf");
-    font-family: FuturaExtended;
+    font-family: futuraExtended;
 }
 
 html {
@@ -18,8 +18,9 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
-    background: url("../resources/img/environment-forest-grass.jpg");
+    background: url("../resources/img/MeSkiingSteamboat.jpg");
     background-size: cover;
+    background-position: center;
     font-family: futura;
 }
 
@@ -41,7 +42,6 @@ body {
     display: inline-block;
     font-size: 46px;
     padding-top: 10px;
-    font-family: FuturaExtended;
 }
 #name:hover {
     cursor: pointer;
@@ -60,10 +60,6 @@ body {
     cursor: pointer;
     text-shadow: 0px 0px #FFFFFF;
     text-decoration: underline;
-}
-
-.navLink span, .navExternalLink span {
-    font-family: FuturaExtended;
 }
 
 .navExternalLink a {
