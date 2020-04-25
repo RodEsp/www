@@ -4,7 +4,8 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
 	entry: {
-		index: './src/client/js/index.js'
+		index: './src/client/js/index.js',
+		lastoasiscraftinggraph: './src/client/projects/lastoasis/lastoasiscraftinggraph.js'
 	},
 	mode: 'production',
 	module: {
@@ -18,6 +19,7 @@ module.exports = {
 	},
 	output: {
 		path: path.join(process.cwd(), 'dist/public/js'),
+		publicPath: '/',
 		filename: '[name].js'
 	},
 	plugins: [

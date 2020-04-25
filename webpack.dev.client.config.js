@@ -4,7 +4,8 @@ const CopyPlugin = require('copy-webpack-plugin');
 module.exports = {
 	devtool: 'source-map',
 	entry: {
-		index: './src/client/js/index.js'
+		index: './src/client/js/index.js',
+		lastoasiscraftinggraph: './src/client/projects/lastoasis/lastoasiscraftinggraph.js'
 	},
 	mode: 'development',
 	module: {
