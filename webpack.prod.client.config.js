@@ -1,6 +1,6 @@
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
 	entry: {
@@ -28,10 +28,9 @@ module.exports = {
 			to: '../', 
 			ignore: ['*.js']
 		}]),
-		new UglifyJsPlugin({
+		new TerserPlugin({
 			cache: true,
-			parallel: true,
-			sourceMap: true // set to true if you want JS source maps
+			parallel: true
 		})
 	],
 	target: 'web'

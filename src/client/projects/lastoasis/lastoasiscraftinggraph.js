@@ -1,6 +1,6 @@
 import cytoscape from 'cytoscape';
 import cyViewUtilities from 'cytoscape-view-utilities';
-import ulog from 'ulog'
+import ulog from 'ulog';
 
 import craftingdata from './craftingdata.json';
 
@@ -303,7 +303,7 @@ document.getElementById('removeAllHighlights').addEventListener('click', functio
 document.getElementById('addColorBtn').addEventListener('click', function () {
 	let color = getRandomColor();
 	let nodeStyle = { 'border-color': color, 'border-width': 3 };
-	let edgeStyle = { 'line-color': color, 'source-arrow-color': color, 'target-arrow-color': color, 'width': 3 }
+	let edgeStyle = { 'line-color': color, 'source-arrow-color': color, 'target-arrow-color': color, 'width': 3 };
 	api.addHighlightStyle(nodeStyle, edgeStyle);
 	addHighlightColorOptions();
 	document.getElementById('highlightColors').selectedIndex = api.getHighlightStyles().length - 1;
@@ -314,7 +314,7 @@ document.getElementById('colorChangerBtn').addEventListener('click', function ()
 	let color = document.getElementById('colorInp').value;
 	var idx = document.getElementById('highlightColors').selectedIndex;
 	let nodeStyle = { 'border-color': color, 'border-width': 3 };
-	let edgeStyle = { 'line-color': color, 'source-arrow-color': color, 'target-arrow-color': color, 'width': 3 }
+	let edgeStyle = { 'line-color': color, 'source-arrow-color': color, 'target-arrow-color': color, 'width': 3 };
 	api.changeHighlightStyle(idx, nodeStyle, edgeStyle);
 
 	var opt = document.getElementById('highlightColors').options[idx];
@@ -355,5 +355,3 @@ function getRandomColor () {
 	}
 	return color;
 }
-
-log.log(cy.data());
