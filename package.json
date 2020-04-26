@@ -23,7 +23,8 @@
     "lint": "eslint **/*.js"
   },
   "dependencies": {
-    "cytoscape": "^3.14.1",
+    "cytoscape": "^3.14.2",
+    "cytoscape-view-utilities": "^4.0.0",
     "express": "^4",
     "ulog": "^2.0.0-beta.7"
   },

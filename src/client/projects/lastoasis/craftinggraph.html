@@ -4,6 +4,7 @@
 <head>
     <title>Last Oasis Crafting Graph</title>
     <link rel="stylesheet" type="text/css" href="../../css/main.css">
+    <link rel="stylesheet" type="text/css" href="craftinggraph.css">
     <meta name="viewport" content="width=device-width, user-scalable=yes">
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -21,9 +22,47 @@
 
     <h1>Last Oasis Crafting Graph</h1>
 
-    <div id="graph" style="width:100%;height:90%;background-color:gray"></div>
+    <div class="topnav">
+        <p style="line-height: 20px">
+            Click on a node to select it. </br>
+            Click and drag to select a collection of nodes. </br>
+            Shift + Hold Click to select neighbors. </br>
+            Use mouse wheel to zoom.
+        </p>
+
+        <button id="hide" style="cursor: pointer; color: green">Hide Selected</button> | 
+        <button id="showAll" style="cursor: pointer; color: green">Show All</button> <br/><br/>
+
+        <!-- <button>Highlight Color:</button>
+        <div class="m-1">
+            <select id="highlightColors">
+            </select>
+            <input type="color" id="colorInp">
+            <button id="colorChangerBtn">Update Color</button>
+            <button id="addColorBtn">Add Color</button>
+        </div>
+        <br/> -->
+
+        <button id="highlightElements" style="cursor: pointer; color: green">Highlight Selected</button> <br/><br/>
+        <button id="highlightNeighbors" style="cursor: pointer; color: green">Highlight Neighbors</button><br/><br/>
+        <button id="showHiddenNeighbors" style="cursor: pointer; color: green">Show Hidden Neighbors of Selected</button> <br/><br/>
+        <button id="removeSelectedHighlights" style="cursor: pointer; color: green">Remove Selected Highlights</button> <br/><br/>
+        <button id="removeAllHighlights" style="cursor: pointer; color: green">Remove All Highlights</button> <br/><br/>
+        <button id="zoomToSelected" style="cursor: pointer; color: green">Zoom to Selected</button><br/><br/>
+        <button id="marqueeZoom" style="cursor: pointer; color: green">Marquee Zoom</button>
+        <br/>
+        <span style="font-weight: normal !important; font-size: 14px !important;">Shift + drag to specify region; gets disabled after zoom, mouse events on canvas and other api functions calls</span>
+        <br/><br/>
+        <label for="layout" style="vertical-align:middle;">Rearrange on Hide/Show</label>
+        <input type="checkbox" id="layout" name="layout" style="vertical-align:middle;" checked="true">
+        <br/><br/>
+        <span style="font-weight: normal !important; font-size: 14px !important;">Shift + taphold to select neighbors</span>
+    </div>
+
+    <div id="graph"></div>
 
     <script type="text/javascript" src="../../js/lastoasiscraftinggraph.js"></script>
+    
 </body>
 
 </html>
