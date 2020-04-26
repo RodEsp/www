@@ -1,7 +1,7 @@
 image: google/cloud-sdk:alpine
 
 build:
-  image: node:10
+  image: node:12
   stage: build
   script:
     - npm install --progress=false
