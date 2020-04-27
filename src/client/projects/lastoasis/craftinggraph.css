@@ -106,5 +106,9 @@ body {
 }
 
 button {
-	color: green
+	color: green;
+}
+
+input[type="button"] {
+  color: green;
 }

@@ -23,37 +23,43 @@
     <h1>Last Oasis Crafting Graph</h1>
 
     <div class="topnav">
+        <input type="text" id="searchBox" />
+        <input type="button" id="searchButton" value="Search" />
+
         <p style="line-height: 20px">
-            Click and Drag to move the graph around. </br>
-            Click on a node to select it. </br>
-            Shift + Hold Click to select neighbors. </br>
-            Shift + Click and Drag to select a collection of nodes. </br>
-            Use mouse wheel to zoom. </br>
+            Click and Drag to move the graph around. <br/>
+            Click on a node to select it. <br/>
+            Shift + Hold Click to select neighbors. <br/>
+            Shift + Click and Drag to select a collection of nodes. <br/>
+            Use mouse wheel to zoom. <br/>
             CTRL+Z to undo, CTRL+Y to redo
         </p>
 
-        <button id="hide">Hide Selected</button> | 
-        <button id="showAll">Show All</button> <br/><br/>
+        <input type="button" id="hide" value="Hide Selected"> |
+        <input type="button" id="hideUnselected" value="Hide Unselected"> |
+        <input type="button" id="showAll" value="Show All">
+        <br/><br/>
+        <input type="button" id="showHiddenNeighbors" value="Show Hidden Neighbors of Selected">
+        <br/><br/>
 
-        <button>Highlight Color:</button>
+        <label for="highlightColors">Highlight Color:</label>
         <div class="m-1">
             <select id="highlightColors">
             </select>
             <input type="color" id="colorInp">
-            <button id="colorChangerBtn">Update Color</button>
-            <button id="addColorBtn">Add Color</button>
+            <input type="button" id="colorChangerBtn" value="Update Color">
+            <input type="button" id="addColorBtn" value="Add Color">
         </div>
         <br/>
 
-        <button id="highlightElements">Highlight Selected</button> <br/><br/>
-        <button id="highlightNeighbors">Highlight Neighbors</button><br/><br/>
-        <button id="showHiddenNeighbors">Show Hidden Neighbors of Selected</button> <br/><br/>
-        <button id="removeSelectedHighlights">Remove Selected Highlights</button> <br/><br/>
-        <button id="removeAllHighlights">Remove All Highlights</button> <br/><br/>
-        <button id="zoomToSelected">Zoom to Selected</button><br/><br/>
-        <button id="marqueeZoom">Marquee Zoom</button>
+        <input type="button" id="highlightElements" value="Highlight Selected"> |
+        <input type="button" id="highlightNeighbors" value="Highlight Neighbors"><br/><br/>
+        <input type="button" id="removeSelectedHighlights" value="Remove Selected Highlights"> |
+        <input type="button" id="removeAllHighlights" value="Remove All Highlights"> <br/><br/>
+        <input type="button" id="marqueeZoom" value="Marquee Zoom">
         <br/>
-        <span style="font-weight: normal !important; font-size: 14px !important;">Shift + drag to specify region; gets disabled after zoom, mouse events on canvas and other api functions calls</span>
+        <span style="font-weight: normal !important; font-size: 14px !important;">Shift + drag to specify region; gets
+            disabled after zoom, mouse events on canvas and other api functions calls</span>
         <br/><br/>
         <label for="layout" style="vertical-align:middle;">Rearrange on Hide/Show</label>
         <input type="checkbox" id="layout" name="layout" style="vertical-align:middle;" checked="true">
@@ -63,7 +69,7 @@
     <div id="graph"></div>
 
     <script type="text/javascript" src="../../js/lastoasiscraftinggraph.js"></script>
-    
+
 </body>
 
 </html>
