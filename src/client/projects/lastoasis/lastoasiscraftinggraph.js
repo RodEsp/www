@@ -1,3 +1,13 @@
+// TODO: Change layout to breadthtraversal on unselected hidden
+/* cy.layout({
+    name:'breadthfirst',
+    fit: 'true',
+    spacingFactor: .3,
+    directed: true,
+    maximal: true,
+    animate: true
+}).run() */
+
 import cytoscape from 'cytoscape';
 import fcose from 'cytoscape-fcose';
 import klay from 'cytoscape-klay';
