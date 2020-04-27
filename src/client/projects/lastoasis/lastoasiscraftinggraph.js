@@ -1,10 +1,12 @@
 import cytoscape from 'cytoscape';
+import cyUR from 'cytoscape-undo-redo';
 import cyViewUtilities from 'cytoscape-view-utilities';
 import ulog from 'ulog';
 
 import craftingdata from './craftingdata.json';
 
 cyViewUtilities(cytoscape);
+cyUR(cytoscape);
 
 const log = ulog('last-oasis-crafting-graph');
 log.level = log.INFO;
@@ -147,6 +149,8 @@ var api = cy.viewUtilities({
 	neighborSelectTime: 1000
 });
 
+var ur = cy.undoRedo();
+
 var layout = cy.layoutObject = cy.layout({
 	name: 'breadthfirst',
 
@@ -172,27 +176,37 @@ var layout = cy.layoutObject = cy.layout({
 
 layout.run();
 
-function changeBorder (eles) {
+function thickenBorder (eles) {
 	eles.forEach(function (ele) {
 		ele.css('background-color', 'purple');
 	});
+	eles.data('thickBorder', true);
 	return eles;
 }
-
-function revertBorder (eles) {
+// Decrease border width when hidden neighbors of the nodes become visible
+function thinBorder (eles) {
 	eles.forEach(function (ele) {
-		ele.css('background-color', 'green');
+		ele.css('background-color', 'lightgrey');
 	});
+	eles.removeData('thickBorder');
 	return eles;
 }
+ur.action('thickenBorder', thickenBorder, thinBorder);
+ur.action('thinBorder', thinBorder, thickenBorder);
 
+//In below functions, finding the nodes to hide/show are sample specific.
+//If the sample graph changes, those calculations may also need a change.
 document.getElementById('hide').addEventListener('click', function () {
 	api.disableMarqueeZoom();
-	var nodesWithHiddenNeighbor = cy.edges(':hidden').connectedNodes(':visible');
-	revertBorder(nodesWithHiddenNeighbor);
-	api.hide(cy.$(':selected'));
-	nodesWithHiddenNeighbor = cy.edges(':hidden').connectedNodes(':visible');
-	changeBorder(nodesWithHiddenNeighbor);
+	var actions = [];
+	var nodesToHide = cy.$(':selected').add(cy.$(':selected').nodes().descendants());
+	var nodesWithHiddenNeighbor = cy.edges(':hidden').connectedNodes().intersection(nodesToHide);
+	actions.push({ name: 'thinBorder', param: nodesWithHiddenNeighbor });
+	actions.push({ name: 'hide', param: nodesToHide });
+	nodesWithHiddenNeighbor = nodesToHide.neighborhood(':visible')
+		.nodes().difference(nodesToHide).difference(cy.nodes('[thickBorder]'));
+	actions.push({ name: 'thickenBorder', param: nodesWithHiddenNeighbor });
+	cy.undoRedo().do('batch', actions);
 	if (document.getElementById('layout').checked) {
 		layout.run();
 	}
@@ -200,22 +214,44 @@ document.getElementById('hide').addEventListener('click', function () {
 
 document.getElementById('showAll').addEventListener('click', function () {
 	api.disableMarqueeZoom();
-	var nodesWithHiddenNeighbor = cy.edges(':hidden').connectedNodes(':visible');
-	revertBorder(nodesWithHiddenNeighbor);
-	api.show(cy.elements());
+	var actions = [];
+	var nodesWithHiddenNeighbor = cy.nodes('[thickBorder]');
+	actions.push({ name: 'thinBorder', param: nodesWithHiddenNeighbor });
+	actions.push({ name: 'show', param: cy.elements() });
+	ur.do('batch', actions);
 	if (document.getElementById('layout').checked) {
 		layout.run();
 	}
 });
 
 document.getElementById('showHiddenNeighbors').addEventListener('click', function () {
+
+	/*
+	var hiddenEles = cy.$(":selected").neighborhood().filter(':hidden');
+	var actions = [];
+	var nodesWithHiddenNeighbor = (hiddenEles.neighborhood(":visible").nodes("[thickBorder]"))
+		.difference(cy.edges(":hidden").difference(hiddenEles.edges().union(hiddenEles.nodes().connectedEdges())).connectedNodes());
+	actions.push({name: "thinBorder", param: nodesWithHiddenNeighbor});
+	actions.push({name: "show", param: hiddenEles.union(hiddenEles.parent())});
+	nodesWithHiddenNeighbor = hiddenEles.nodes().edgesWith(cy.nodes(":hidden").difference(hiddenEles.nodes()))
+		.connectedNodes().intersection(hiddenEles.nodes());
+	actions.push({name: "thickenBorder", param: nodesWithHiddenNeighbor});*/
+
 	api.disableMarqueeZoom();
+	var hiddenEles = cy.$(':selected').neighborhood().filter(':hidden');
 	var selectedNodes = cy.nodes(':selected');
-	var nodesWithHiddenNeighbor = cy.edges(':hidden').connectedNodes(':visible');
-	revertBorder(nodesWithHiddenNeighbor);
-	api.showHiddenNeighbors(selectedNodes);
-	nodesWithHiddenNeighbor = cy.edges(':hidden').connectedNodes(':visible');
-	changeBorder(nodesWithHiddenNeighbor);
+	var nodesWithHiddenNeighbor = (hiddenEles.neighborhood(':visible').nodes('[thickBorder]'))
+		.difference(cy.edges(':hidden').difference(hiddenEles.edges().union(hiddenEles.nodes().connectedEdges())).connectedNodes());
+
+	var actions = [];
+	actions.push({ name: 'thinBorder', param: nodesWithHiddenNeighbor });
+	actions.push({ name: 'showHiddenNeighbors', param: selectedNodes });
+
+	nodesWithHiddenNeighbor = hiddenEles.nodes().edgesWith(cy.nodes(':hidden').difference(hiddenEles.nodes()))
+		.connectedNodes().intersection(hiddenEles.nodes());
+	actions.push({ name: 'thickenBorder', param: nodesWithHiddenNeighbor });
+
+	cy.undoRedo().do('batch', actions);
 	if (document.getElementById('layout').checked) {
 		layout.run();
 	}
@@ -231,7 +267,6 @@ document.getElementById('zoomToSelected').addEventListener('click', function () 
 });
 
 document.getElementById('marqueeZoom').addEventListener('click', function () {
-	//document.getElementById("cy").style.cursor ="crosshair";
 	api.enableMarqueeZoom();
 	if (document.getElementById('layout').checked) {
 		layout.run();
@@ -254,60 +289,58 @@ cy.on('tap', 'node', function (event) {
 });
 
 cy.on('doubleTap', 'node', function (event) {
-	/*
-	var nodesWithHiddenNeighbor = cy.edges(":hidden").connectedNodes(':visible');
-	revertBorder(nodesWithHiddenNeighbor);
-	api.show(cy.nodes(":selected").neighborhood().union(cy.nodes(":selected").neighborhood().parent()));
-	nodesWithHiddenNeighbor = cy.edges(":hidden").connectedNodes(':visible');
-	changeBorder(nodesWithHiddenNeighbor);
-	*/
+
 	api.disableMarqueeZoom();
+	var hiddenEles = cy.$(':selected').neighborhood().filter(':hidden');
 	var selectedNodes = cy.nodes(':selected');
-	var nodesWithHiddenNeighbor = cy.edges(':hidden').connectedNodes(':visible');
-	revertBorder(nodesWithHiddenNeighbor);
-	api.showHiddenNeighbors(selectedNodes);
-	nodesWithHiddenNeighbor = cy.edges(':hidden').connectedNodes(':visible');
-	changeBorder(nodesWithHiddenNeighbor);
-	if (document.getElementById('layout').checked) {
-		layout.run();
-	}
+	var nodesWithHiddenNeighbor = (hiddenEles.neighborhood(':visible').nodes('[thickBorder]')).difference(cy.edges(':hidden').difference(hiddenEles.edges().union(hiddenEles.nodes().connectedEdges())).connectedNodes());
+	var actions = [];
+	actions.push({ name: 'thinBorder', param: nodesWithHiddenNeighbor });
+
+	actions.push({ name: 'showHiddenNeighbors', param: selectedNodes });
+
+	nodesWithHiddenNeighbor = hiddenEles.nodes().edgesWith(cy.nodes(':hidden').difference(hiddenEles.nodes()))
+		.connectedNodes().intersection(hiddenEles.nodes());
+	actions.push({ name: 'thickenBorder', param: nodesWithHiddenNeighbor });
+
+	cy.undoRedo().do('batch', actions);
+
+
+	/* var hiddenEles = cy.$(":selected").neighborhood().filter(':hidden');
+	var actions = [];
+	var nodesWithHiddenNeighbor = (hiddenEles.neighborhood(":visible").nodes("[thickBorder]"))
+		.difference(cy.edges(":hidden").difference(hiddenEles.edges().union(hiddenEles.nodes().connectedEdges())).connectedNodes());
+	actions.push({name: "thinBorder", param: nodesWithHiddenNeighbor});
+	actions.push({name: "show", param: hiddenEles.union(hiddenEles.parent())});
+	nodesWithHiddenNeighbor = hiddenEles.nodes().edgesWith(cy.nodes(":hidden").difference(hiddenEles.nodes()))
+		.connectedNodes().intersection(hiddenEles.nodes());
+	actions.push({name: "thickenBorder", param: nodesWithHiddenNeighbor});
+	cy.undoRedo().do("batch", actions); */
 });
 
 document.getElementById('highlightNeighbors').addEventListener('click', function () {
-	api.disableMarqueeZoom();
 	if (cy.$(':selected').length > 0) {
-		var idx = document.getElementById('highlightColors').selectedIndex;
-		api.highlightNeighbors(cy.$(':selected'), idx);
+		ur.do('highlightNeighbors', { eles: cy.$(':selected'), idx: document.getElementById('highlightColors').selectedIndex });
 	}
 });
 
 document.getElementById('highlightElements').addEventListener('click', function () {
-	api.disableMarqueeZoom();
 	if (cy.$(':selected').length > 0) {
-		var idx = document.getElementById('highlightColors').selectedIndex;
-		api.highlight(cy.$(':selected'), idx);
+		ur.do('highlight', { eles: cy.$(':selected'), idx: document.getElementById('highlightColors').selectedIndex });
 	}
 });
 
 document.getElementById('removeSelectedHighlights').addEventListener('click', function () {
-	api.disableMarqueeZoom();
 	if (cy.$(':selected').length > 0)
-		api.removeHighlights(cy.$(':selected'));
+		ur.do('removeHighlights', cy.$(':selected'));
 });
 
 document.getElementById('removeAllHighlights').addEventListener('click', function () {
-	api.disableMarqueeZoom();
-	api.removeHighlights();
+	ur.do('removeHighlights');
 });
 
-document.getElementById('addColorBtn').addEventListener('click', function () {
-	let color = getRandomColor();
-	let nodeStyle = { 'border-color': color, 'border-width': 3 };
-	let edgeStyle = { 'line-color': color, 'source-arrow-color': color, 'target-arrow-color': color, 'width': 3 };
-	api.addHighlightStyle(nodeStyle, edgeStyle);
-	addHighlightColorOptions();
-	document.getElementById('highlightColors').selectedIndex = api.getHighlightStyles().length - 1;
-	document.getElementById('colorInp').value = color;
+document.getElementById('highlightColors').addEventListener('change', function (e) {
+	document.getElementById('colorInp').value = e.target.value;
 });
 
 document.getElementById('colorChangerBtn').addEventListener('click', function () {
@@ -322,8 +355,14 @@ document.getElementById('colorChangerBtn').addEventListener('click', function ()
 	opt.text = color;
 });
 
-document.getElementById('highlightColors').addEventListener('change', function (e) {
-	document.getElementById('colorInp').value = e.target.value;
+document.getElementById('addColorBtn').addEventListener('click', function () {
+	let color = getRandomColor();
+	let nodeStyle = { 'border-color': color, 'border-width': 3 };
+	let edgeStyle = { 'line-color': color, 'source-arrow-color': color, 'target-arrow-color': color, 'width': 3 };
+	api.addHighlightStyle(nodeStyle, edgeStyle);
+	addHighlightColorOptions();
+	document.getElementById('highlightColors').selectedIndex = api.getHighlightStyles().length - 1;
+	document.getElementById('colorInp').value = color;
 });
 
 addHighlightColorOptions();
@@ -355,3 +394,12 @@ function getRandomColor () {
 	}
 	return color;
 }
+
+document.addEventListener('keydown', function (e) {
+	if (e.ctrlKey) {
+		if (e.which === 90)
+			ur.undo();
+		else if (e.which === 89)
+			ur.redo();
+	}
+});
