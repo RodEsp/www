@@ -1,14 +1,5 @@
-// TODO: Change layout to breadthtraversal on unselected hidden
-/* cy.layout({
-    name:'breadthfirst',
-    fit: 'true',
-    spacingFactor: .3,
-    directed: true,
-    maximal: true,
-    animate: true
-}).run() */
-
 import cytoscape from 'cytoscape';
+import dagre from 'cytoscape-dagre';
 import fcose from 'cytoscape-fcose';
 import klay from 'cytoscape-klay';
 import cyUR from 'cytoscape-undo-redo';
@@ -19,6 +10,7 @@ import craftingdata from './craftingdata.json';
 
 cyViewUtilities(cytoscape);
 cyUR(cytoscape);
+cytoscape.use(dagre);
 cytoscape.use(klay);
 cytoscape.use(fcose);
 
@@ -29,26 +21,26 @@ const elements = [];
 const allItems = {};
 
 // Use lowercase names with spaces removed as node and edge IDs.
-let itemNameToLowerCase = '';
-let ingredientNameToLowerCase = '';
+const itemNameToNodeID = (name) => name.replace(/\s/g, '').replace(/\(/g, '').replace(/\)/g, '').toLowerCase();
 
 // Add all items to an object so we can use it as a hashmap to see if an item doesn't already exist as a node.
 craftingdata.forEach((item) => {
-	itemNameToLowerCase = item.name.replace(/\s/g, '').replace(/\(/g, '').replace(/\)/g, '').toLowerCase();
-
-	allItems[itemNameToLowerCase] = true;
+	allItems[itemNameToNodeID(item.name)] = true;
 });
 
 craftingdata.forEach((item) => {
+	let nodeID;
+
 	// Add nodes
 	try {
-		itemNameToLowerCase = item.name.replace(/\s/g, '').replace(/\(/g, '').replace(/\)/g, '').toLowerCase();
+		nodeID = itemNameToNodeID(item.name);
 
 		log.verbose(`Adding node for ${item.name}`);
 		elements.push({
 			group: 'nodes',
+			classes: item.crafting ? ['crafted'] : ['root'],
 			data: {
-				id: itemNameToLowerCase,
+				id: nodeID,
 				name: item.name,
 				// imageUrl: item.image,
 				color: 'green',
@@ -66,18 +58,20 @@ craftingdata.forEach((item) => {
 
 			try {
 				recipe.ingredients.forEach((ingredient) => {
-					ingredientNameToLowerCase = ingredient.name.replace(/\s/g, '').replace(/\(/g, '').replace(/\)/g, '').toLowerCase();
+					const ingredientNodeID = itemNameToNodeID(ingredient.name);
 
 					// If an ingredient doesn't exist as a node, then add it.
-					if (!allItems[ingredientNameToLowerCase]) {
+					if (!allItems[ingredientNodeID]) {
 						log.warn(`${ingredient.name} does not exist as a node on the graph.`);
 
 						elements.push({
 							group: 'nodes',
+							classes: ['root'],
 							data: {
-								id: ingredientNameToLowerCase,
+								id: ingredientNodeID,
 								name: ingredient.name,
-								color: 'red'
+								color: 'red',
+								category: 'uncategorized'
 							}
 						});
 					}
@@ -86,9 +80,9 @@ craftingdata.forEach((item) => {
 					elements.push({
 						group: 'edges',
 						data: {
-							id: `${ingredientNameToLowerCase}->${itemNameToLowerCase}`,
-							source: ingredientNameToLowerCase,
-							target: itemNameToLowerCase
+							id: `${ingredientNodeID}->${nodeID}`,
+							source: ingredientNodeID,
+							target: nodeID
 						}
 					});
 				});
@@ -145,6 +139,8 @@ const cy = window.cy = cytoscape({
 		}
 	]
 });
+const ur = cy.undoRedo();
+const removedElements = cy.removedElements = [];
 
 const api = cy.viewUtilities({
 	highlightStyles: [
@@ -161,9 +157,107 @@ const api = cy.viewUtilities({
 	neighborSelectTime: 1000
 });
 
-const ur = cy.undoRedo();
+const concentricLayout = cy.concentricLayout = cy.layout({
+	name: 'concentric',
 
-const layout = cy.layoutObject = cy.layout({
+	fit: true,
+	padding: 30,
+	startAngle: 3 / 2 * Math.PI,
+	sweep: undefined,
+	clockwise: true,
+	equidistant: false,
+	minNodeSpacing: 1,
+	boundingBox: undefined,
+	avoidOverlap: true,
+	nodeDimensionsIncludeLabels: false,
+	spacingFactor: 1,
+	concentric: function (node) {
+		return node.depth();
+	},
+	levelWidth: function (nodes) {
+		return nodes.maxDegree() / 4;
+	},
+	animate: true,
+	animationDuration: 500,
+	transform: function (node, position) { return position; }
+});
+
+const breadthfirstLayout = cy.breadthfirstLayout = cy.layout({
+	name: 'breadthfirst',
+	fit: true,
+	circle: true,
+	roots: cy.$('.root'),
+	avoidOverlap: true,
+	nodeDimensionsIncludeLabels: true,
+	spacingFactor: 1,
+	directed: true,
+	maximal: true,
+	animate: true
+});
+
+const fcoseLayout = cy.fcoseLayout = cy.layout({
+	name: 'fcose',
+
+	quality: 'default', 				// 'draft', 'default' or 'proof' | "draft" only applies spectral layout | "default" improves the quality with incremental layout (fast cooling rate) | "proof" improves the quality with incremental layout (slow cooling rate) 
+	randomize: false,					// Use random node positions at beginning of layout, if this is set to false, then quality option must be "proof"
+	animate: true,						// Whether or not to animate the layout
+	animationDuration: 1000,			// Duration of animation in ms, if enabled
+	animationEasing: undefined,			// Easing of animation, if enabled
+	fit: true,							// Fit the viewport to the repositioned nodes
+	padding: 30,						// Padding around layout
+	nodeDimensionsIncludeLabels: true,	// Whether to include labels in node dimensions. Valid in "proof" quality
+	uniformNodeDimensions: true,		// Whether or not simple nodes (non-compound nodes) are of uniform dimensions
+	packComponents: true,				// Whether to pack disconnected components - valid only if randomize: true
+	/* spectral layout options */
+	samplingType: true,					// False for random, true for greedy sampling
+	sampleSize: 25,						// Sample size to construct distance matrix
+	nodeSeparation: 75,					// Separation amount between nodes
+	piTol: 0.0000001,					// Power iteration tolerance
+	/* incremental layout options */
+	nodeRepulsion: 50000,				// Node repulsion (non overlapping) multiplier
+	idealEdgeLength: 50,				// Ideal edge (non nested) length
+	edgeElasticity: 0.01,				// Divisor to compute edge forces
+	nestingFactor: 0.1,					// Nesting factor (multiplier) to compute ideal edge length for nested edges
+	numIter: 2500,						// Maximum number of iterations to perform
+	tile: true,							// For enabling tiling
+	tilingPaddingVertical: 10,			// Represents the amount of the vertical space to put between the zero degree members during the tiling operation(can also be a function)
+	tilingPaddingHorizontal: 10,		// Represents the amount of the horizontal space to put between the zero degree members during the tiling operation(can also be a function)
+	gravity: 0.25,						// Gravity force (constant)
+	gravityRangeCompound: 1.5,			// Gravity range (constant) for compounds
+	gravityCompound: 1.0,				// Gravity force (constant) for compounds
+	gravityRange: 3.8,					// Gravity range (constant)
+	initialEnergyOnIncremental: 0.3,	// Initial cooling factor for incremental layout
+	/* layout event callbacks */
+	ready: () => { }, 					// on layoutready
+	stop: () => { } 					// on layoutstop
+});
+
+const dagreLayout = cy.dagreLayout = cy.layout({
+	name: 'dagre',
+	// dagre algo options, uses default value on undefined
+	nodeSep: undefined, // the separation between adjacent nodes in the same rank
+	edgeSep: undefined, // the separation between adjacent edges in the same rank
+	rankSep: undefined, // the separation between each rank in the layout
+	rankDir: 'LR', // 'TB' for top to bottom flow, 'LR' for left to right,
+	ranker: undefined, // Type of algorithm to assign a rank to each node in the input graph. Possible values: 'network-simplex', 'tight-tree' or 'longest-path'
+	minLen: function (edge) { return 1; }, // number of ranks to keep between the source and target of the edge
+	edgeWeight: function (edge) { return 1; }, // higher weight edges are generally made shorter and straighter than lower weight edges
+	// general layout options
+	fit: true, // whether to fit to viewport
+	padding: 30, // fit padding
+	spacingFactor: 1, // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
+	nodeDimensionsIncludeLabels: false, // whether labels should be included in determining the space used by a node
+	animate: true, // whether to transition the node positions
+	animateFilter: function (node, i) { return true; }, // whether to animate specific nodes when animation is on; non-animated nodes immediately go to their final positions
+	animationDuration: 500, // duration of animation in ms if enabled
+	animationEasing: undefined, // easing of animation if enabled
+	boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+	transform: function (node, pos) { return pos; }, // a function that applies a transform to the final node position
+	ready: function () { }, // on layoutready
+	stop: function () { } // on layoutstop
+});
+
+const klayLayout = cy.klayLayout = cy.layout({
 	name: 'klay',
 
 	nodeDimensionsIncludeLabels: false, // Boolean which changes whether label dimensions are included when calculating node dimensions
@@ -221,58 +315,32 @@ const layout = cy.layoutObject = cy.layout({
 		thoroughness: 777 // How much effort should be spent to produce a nice layout..
 	},
 	priority: function (edge) { return null; }, // Edges with a non-nil value are skipped when greedy edge cycle breaking is enabled
-
-	// name: 'fcose',
-
-	// quality: 'default', 				// 'draft', 'default' or 'proof' | "draft" only applies spectral layout | "default" improves the quality with incremental layout (fast cooling rate) | "proof" improves the quality with incremental layout (slow cooling rate) 
-	// randomize: true,					// Use random node positions at beginning of layout, if this is set to false, then quality option must be "proof"
-	// animate: true,						// Whether or not to animate the layout
-	// animationDuration: 1000,			// Duration of animation in ms, if enabled
-	// animationEasing: undefined,			// Easing of animation, if enabled
-	// fit: true,							// Fit the viewport to the repositioned nodes
-	// padding: 30,						// Padding around layout
-	// nodeDimensionsIncludeLabels: true,	// Whether to include labels in node dimensions. Valid in "proof" quality
-	// uniformNodeDimensions: true,		// Whether or not simple nodes (non-compound nodes) are of uniform dimensions
-	// packComponents: true,				// Whether to pack disconnected components - valid only if randomize: true
-	// /* spectral layout options */
-	// samplingType: true,					// False for random, true for greedy sampling
-	// sampleSize: 25,						// Sample size to construct distance matrix
-	// nodeSeparation: 75,					// Separation amount between nodes
-	// piTol: 0.0000001,					// Power iteration tolerance
-	// /* incremental layout options */
-	// nodeRepulsion: 50000,				// Node repulsion (non overlapping) multiplier
-	// idealEdgeLength: 50,				// Ideal edge (non nested) length
-	// edgeElasticity: 0.01,				// Divisor to compute edge forces
-	// nestingFactor: 0.1,					// Nesting factor (multiplier) to compute ideal edge length for nested edges
-	// numIter: 2500,						// Maximum number of iterations to perform
-	// tile: true,							// For enabling tiling
-	// tilingPaddingVertical: 10,			// Represents the amount of the vertical space to put between the zero degree members during the tiling operation(can also be a function)
-	// tilingPaddingHorizontal: 10,		// Represents the amount of the horizontal space to put between the zero degree members during the tiling operation(can also be a function)
-	// gravity: 0.25,						// Gravity force (constant)
-	// gravityRangeCompound: 1.5,			// Gravity range (constant) for compounds
-	// gravityCompound: 1.0,				// Gravity force (constant) for compounds
-	// gravityRange: 3.8,					// Gravity range (constant)
-	// initialEnergyOnIncremental: 0.3,	// Initial cooling factor for incremental layout
-	// /* layout event callbacks */
-	// ready: () => { }, 					// on layoutready
-	// stop: () => { } 					// on layoutstop
 });
 
-layout.run();
+cy.setLayout = (newLayout) => {
+	cy.layoutObject = newLayout;
+	return cy.layoutObject;
+};
 
-function thickenBorder (eles) {
-	eles.forEach((ele) => { ele.css('background-color', 'purple'); });
-	eles.data('thickBorder', true);
-	return eles;
+try {
+	cy.setLayout(breadthfirstLayout).run();
+} catch (e) {
+	log.error(e);
 }
+
+// function thickenBorder (eles) {
+// 	eles.forEach((ele) => { ele.css('background-color', 'purple'); });
+// 	eles.data('thickBorder', true);
+// 	return eles;
+// }
 // Decrease border width when hidden neighbors of the nodes become visible
-function thinBorder (eles) {
-	eles.forEach((ele) => { ele.css('background-color', 'data(color)'); });
-	eles.removeData('thickBorder');
-	return eles;
-}
-ur.action('thickenBorder', thickenBorder, thinBorder);
-ur.action('thinBorder', thinBorder, thickenBorder);
+// function thinBorder (eles) {
+// 	eles.forEach((ele) => { ele.css('background-color', 'green'); });
+// 	eles.removeData('thickBorder');
+// 	return eles;
+// }
+// ur.action('thickenBorder', thickenBorder, thinBorder);
+// ur.action('thinBorder', thinBorder, thickenBorder);
 
 document.getElementById('searchButton').addEventListener('click', () => {
 	api.disableMarqueeZoom();
@@ -291,21 +359,30 @@ document.getElementById('searchBox').addEventListener('keyup', function (event) 
 	}
 });
 
+const remove = function (eles) {
+	eles = eles.union(eles.connectedEdges());
+	eles.unselect();
+
+	removedElements.push(eles);
+	eles.remove();
+
+	return eles;
+};
+
 //In below functions, finding the nodes to hide/show are sample specific.
 //If the sample graph changes, those calculations may also need a change.
 document.getElementById('hide').addEventListener('click', () => {
 	api.disableMarqueeZoom();
 	const actions = [];
 	const nodesToHide = cy.$(':selected').add(cy.$(':selected').nodes().descendants());
-	let nodesWithHiddenNeighbor = cy.edges(':hidden').connectedNodes().intersection(nodesToHide);
-	actions.push({ name: 'thinBorder', param: nodesWithHiddenNeighbor });
+	// let nodesWithHiddenNeighbor = cy.edges(':hidden').connectedNodes().intersection(nodesToHide);
+	// actions.push({ name: 'thinBorder', param: nodesWithHiddenNeighbor });
 	actions.push({ name: 'hide', param: nodesToHide });
-	nodesWithHiddenNeighbor = nodesToHide.neighborhood(':visible')
-		.nodes().difference(nodesToHide).difference(cy.nodes('[thickBorder]'));
-	actions.push({ name: 'thickenBorder', param: nodesWithHiddenNeighbor });
-	cy.undoRedo().do('batch', actions);
+	// nodesWithHiddenNeighbor = nodesToHide.neighborhood(':visible').nodes().difference(nodesToHide).difference(cy.nodes('[thickBorder]'));
+	// actions.push({ name: 'thickenBorder', param: nodesWithHiddenNeighbor });
+	ur.do('batch', actions);
 	if (document.getElementById('layout').checked) {
-		layout.run();
+		cy.layoutObject.run();
 	}
 });
 
@@ -313,80 +390,65 @@ document.getElementById('hideUnselected').addEventListener('click', () => {
 	api.disableMarqueeZoom();
 	const actions = [];
 	const nodesToHide = cy.$(':unselected').add(cy.$(':unselected').nodes().descendants());
-	let nodesWithHiddenNeighbor = cy.edges(':hidden').connectedNodes().intersection(nodesToHide);
-	actions.push({ name: 'thinBorder', param: nodesWithHiddenNeighbor });
+	// let nodesWithHiddenNeighbor = cy.edges(':hidden').connectedNodes().intersection(nodesToHide);
+	// actions.push({ name: 'thinBorder', param: nodesWithHiddenNeighbor });
 	actions.push({ name: 'hide', param: nodesToHide });
-	nodesWithHiddenNeighbor = nodesToHide.neighborhood(':visible')
-		.nodes().difference(nodesToHide).difference(cy.nodes('[thickBorder]'));
-	actions.push({ name: 'thickenBorder', param: nodesWithHiddenNeighbor });
-	cy.undoRedo().do('batch', actions);
+	// nodesWithHiddenNeighbor = nodesToHide.neighborhood(':visible').nodes().difference(nodesToHide).difference(cy.nodes('[thickBorder]'));
+	// actions.push({ name: 'thickenBorder', param: nodesWithHiddenNeighbor });
+	ur.do('batch', actions);
 	if (document.getElementById('layout').checked) {
-		layout.run();
+		cy.setLayout(breadthfirstLayout).run();
 	}
 });
 
 document.getElementById('showAll').addEventListener('click', () => {
 	api.disableMarqueeZoom();
 	const actions = [];
-	const nodesWithHiddenNeighbor = cy.nodes('[thickBorder]');
-	actions.push({ name: 'thinBorder', param: nodesWithHiddenNeighbor });
+	// const nodesWithHiddenNeighbor = cy.nodes('[thickBorder]');
+	// actions.push({ name: 'thinBorder', param: nodesWithHiddenNeighbor });
 	actions.push({ name: 'show', param: cy.elements() });
 	ur.do('batch', actions);
 	if (document.getElementById('layout').checked) {
-		layout.run();
+		cy.layoutObject.run();
 	}
 });
 
 document.getElementById('showHiddenNeighbors').addEventListener('click', () => {
-
-	/*
-	const hiddenEles = cy.$(":selected").neighborhood().filter(':hidden');
-	const actions = [];
-	const nodesWithHiddenNeighbor = (hiddenEles.neighborhood(":visible").nodes("[thickBorder]"))
-		.difference(cy.edges(":hidden").difference(hiddenEles.edges().union(hiddenEles.nodes().connectedEdges())).connectedNodes());
-	actions.push({name: "thinBorder", param: nodesWithHiddenNeighbor});
-	actions.push({name: "show", param: hiddenEles.union(hiddenEles.parent())});
-	nodesWithHiddenNeighbor = hiddenEles.nodes().edgesWith(cy.nodes(":hidden").difference(hiddenEles.nodes()))
-		.connectedNodes().intersection(hiddenEles.nodes());
-	actions.push({name: "thickenBorder", param: nodesWithHiddenNeighbor});*/
-
 	api.disableMarqueeZoom();
-	const hiddenEles = cy.$(':selected').neighborhood().filter(':hidden');
+	// const hiddenEles = cy.$(':selected').neighborhood().filter(':hidden');
 	const selectedNodes = cy.nodes(':selected');
-	let nodesWithHiddenNeighbor = (hiddenEles.neighborhood(':visible').nodes('[thickBorder]'))
-		.difference(cy.edges(':hidden').difference(hiddenEles.edges().union(hiddenEles.nodes().connectedEdges())).connectedNodes());
-
+	// let nodesWithHiddenNeighbor = (hiddenEles.neighborhood(':visible').nodes('[thickBorder]')).difference(cy.edges(':hidden').difference(hiddenEles.edges().union(hiddenEles.nodes().connectedEdges())).connectedNodes());
 	const actions = [];
-	actions.push({ name: 'thinBorder', param: nodesWithHiddenNeighbor });
+	// actions.push({ name: 'thinBorder', param: nodesWithHiddenNeighbor });
 	actions.push({ name: 'showHiddenNeighbors', param: selectedNodes });
+	// nodesWithHiddenNeighbor = hiddenEles.nodes().edgesWith(cy.nodes(':hidden').difference(hiddenEles.nodes())).connectedNodes().intersection(hiddenEles.nodes());
+	// actions.push({ name: 'thickenBorder', param: nodesWithHiddenNeighbor });
 
-	nodesWithHiddenNeighbor = hiddenEles.nodes().edgesWith(cy.nodes(':hidden').difference(hiddenEles.nodes()))
-		.connectedNodes().intersection(hiddenEles.nodes());
-	actions.push({ name: 'thickenBorder', param: nodesWithHiddenNeighbor });
-
-	cy.undoRedo().do('batch', actions);
+	ur.do('batch', actions);
 	if (document.getElementById('layout').checked) {
-		layout.run();
+		cy.layoutObject.run();
 	}
 });
 
 document.getElementById('marqueeZoom').addEventListener('click', () => {
 	api.enableMarqueeZoom();
 	if (document.getElementById('layout').checked) {
-		layout.run();
+		cy.layoutObject.run();
 	}
 });
 
 let tappedBefore;
 cy.on('tap', 'node', (event) => {
-	const node = this;
+	const node = event.target;
 	const tappedNow = node;
 	setTimeout(() => {
 		tappedBefore = null;
 	}, 300);
-	if (tappedBefore && tappedBefore.id() === tappedNow.id()) {
-		tappedNow.trigger('doubleTap');
-		tappedBefore = null;
+	if (tappedBefore) {
+		if (tappedBefore.id() === tappedNow.id()) {
+			tappedNow.trigger('doubleTap');
+			tappedBefore = null;
+		}
 	} else {
 		tappedBefore = tappedNow;
 	}
@@ -394,31 +456,18 @@ cy.on('tap', 'node', (event) => {
 
 cy.on('doubleTap', 'node', (event) => {
 	api.disableMarqueeZoom();
-	const hiddenEles = cy.$(':selected').neighborhood().filter(':hidden');
-	const selectedNodes = cy.nodes(':selected');
-	let nodesWithHiddenNeighbor = (hiddenEles.neighborhood(':visible').nodes('[thickBorder]')).difference(cy.edges(':hidden').difference(hiddenEles.edges().union(hiddenEles.nodes().connectedEdges())).connectedNodes());
+	const selectedNode = event.target;
+	let ingredientNodes = cy.nodes().edgesTo(selectedNode).connectedNodes();
 	const actions = [];
-	actions.push({ name: 'thinBorder', param: nodesWithHiddenNeighbor });
 
-	actions.push({ name: 'showHiddenNeighbors', param: selectedNodes });
+	// actions.push({ name: 'thinBorder', param: ingredientNodes });
+	actions.push({ name: 'show', param: ingredientNodes });
+	// actions.push({ name: 'thickenBorder', param: ingredientNodes });
 
-	nodesWithHiddenNeighbor = hiddenEles.nodes().edgesWith(cy.nodes(':hidden').difference(hiddenEles.nodes()))
-		.connectedNodes().intersection(hiddenEles.nodes());
-	actions.push({ name: 'thickenBorder', param: nodesWithHiddenNeighbor });
-
-	cy.undoRedo().do('batch', actions);
-
-
-	/* const hiddenEles = cy.$(":selected").neighborhood().filter(':hidden');
-	const actions = [];
-	const nodesWithHiddenNeighbor = (hiddenEles.neighborhood(":visible").nodes("[thickBorder]"))
-		.difference(cy.edges(":hidden").difference(hiddenEles.edges().union(hiddenEles.nodes().connectedEdges())).connectedNodes());
-	actions.push({name: "thinBorder", param: nodesWithHiddenNeighbor});
-	actions.push({name: "show", param: hiddenEles.union(hiddenEles.parent())});
-	nodesWithHiddenNeighbor = hiddenEles.nodes().edgesWith(cy.nodes(":hidden").difference(hiddenEles.nodes()))
-		.connectedNodes().intersection(hiddenEles.nodes());
-	actions.push({name: "thickenBorder", param: nodesWithHiddenNeighbor});
-	cy.undoRedo().do("batch", actions); */
+	ur.do('batch', actions);
+	if (document.getElementById('layout').checked) {
+		cy.layoutObject.run();
+	}
 });
 
 document.getElementById('highlightNeighbors').addEventListener('click', () => {
@@ -434,8 +483,11 @@ document.getElementById('highlightElements').addEventListener('click', () => {
 });
 
 document.getElementById('removeSelectedHighlights').addEventListener('click', () => {
-	if (cy.$(':selected').length > 0)
-		ur.do('removeHighlights', cy.$(':selected'));
+	const selected = cy.$(':selected');
+	if (selected.length > 0) {
+		ur.do('removeHighlights', selected);
+		selected.unselect();
+	}
 });
 
 document.getElementById('removeAllHighlights').addEventListener('click', () => {

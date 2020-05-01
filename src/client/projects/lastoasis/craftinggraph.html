@@ -23,24 +23,33 @@
     <h1>Last Oasis Crafting Graph</h1>
 
     <div class="topnav">
+        <label for="searchBox">Enter the name of an item</label>
         <input type="text" id="searchBox" />
         <input type="button" id="searchButton" value="Search" />
 
-        <p style="line-height: 20px">
-            Click and Drag to move the graph around. <br/>
-            Click on a node to select it. <br/>
-            Shift + Hold Click to select neighbors. <br/>
-            Shift + Click and Drag to select a collection of nodes. <br/>
-            Use mouse wheel to zoom. <br/>
-            CTRL+Z to undo, CTRL+Y to redo
-        </p>
+        <dl style="line-height: 20px">
+            <dt>Click and Drag</dt>
+            <dd>to move the graph around.</dd>
+            <dt>Click on a node</dt>
+            <dd>to select it.</dd>
+            <dt>Double click on a node</dt>
+            <dd>to reveal hidden parents.</dd>
+            <dt>Shift + Hold Click</dt>
+            <dd>to select neighbors.</dd>
+            <dt>Shift + Click and Drag</dt>
+            <dd>to select a collection of nodes.</dd>
+            <dt>Mouse wheel</dt>
+            <dd>to zoom.</dd>
+            <dt>CTRL+Z / CTRL+Y</dt>
+            <dd>Undo / Redo</dd>
+        </dl>
 
         <input type="button" id="hide" value="Hide Selected"> |
         <input type="button" id="hideUnselected" value="Hide Unselected"> |
         <input type="button" id="showAll" value="Show All">
-        <br/><br/>
+        <br /><br />
         <input type="button" id="showHiddenNeighbors" value="Show Hidden Neighbors of Selected">
-        <br/><br/>
+        <br /><br />
 
         <label for="highlightColors">Highlight Color:</label>
         <div class="m-1">
@@ -50,20 +59,20 @@
             <input type="button" id="colorChangerBtn" value="Update Color">
             <input type="button" id="addColorBtn" value="Add Color">
         </div>
-        <br/>
+        <br />
 
         <input type="button" id="highlightElements" value="Highlight Selected"> |
-        <input type="button" id="highlightNeighbors" value="Highlight Neighbors"><br/><br/>
+        <input type="button" id="highlightNeighbors" value="Highlight Neighbors"><br /><br />
         <input type="button" id="removeSelectedHighlights" value="Remove Selected Highlights"> |
-        <input type="button" id="removeAllHighlights" value="Remove All Highlights"> <br/><br/>
+        <input type="button" id="removeAllHighlights" value="Remove All Highlights"> <br /><br />
         <input type="button" id="marqueeZoom" value="Marquee Zoom">
-        <br/>
+        <br />
         <span style="font-weight: normal !important; font-size: 14px !important;">Shift + drag to specify region; gets
             disabled after zoom, mouse events on canvas and other api functions calls</span>
-        <br/><br/>
+        <br /><br />
         <label for="layout" style="vertical-align:middle;">Rearrange on Hide/Show</label>
         <input type="checkbox" id="layout" name="layout" style="vertical-align:middle;" checked="true">
-        <br/><br/>
+        <br /><br />
     </div>
 
     <div id="graph"></div>
