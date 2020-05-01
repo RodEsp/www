@@ -142,7 +142,7 @@ const cy = window.cy = cytoscape({
 const ur = cy.undoRedo();
 const removedElements = cy.removedElements = [];
 
-const api = cy.viewUtilities({
+const api = cy.api = cy.viewUtilities({
 	highlightStyles: [
 		{ node: { 'border-color': '#000000', 'border-width': 3 }, edge: { 'line-color': '#000000', 'source-arrow-color': '#000000', 'target-arrow-color': '#000000', 'width': 3 } },
 	],
@@ -458,6 +458,7 @@ cy.on('doubleTap', 'node', (event) => {
 	api.disableMarqueeZoom();
 	const selectedNode = event.target;
 	let ingredientNodes = cy.nodes().edgesTo(selectedNode).connectedNodes();
+	ingredientNodes = ingredientNodes.add(cy.nodes().edgesTo(selectedNode))
 	const actions = [];
 
 	// actions.push({ name: 'thinBorder', param: ingredientNodes });
