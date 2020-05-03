@@ -17,7 +17,7 @@
   },
   "scripts": {
     "build": "rm -rf dist && webpack --mode development --config webpack.server.config.js && webpack --mode development --config webpack.dev.client.config.js",
-    "build-prod": "rm -rf dist && webpack --mode production --config webpack.server.config.js && webpack --mode production --config webpack.prod.client.config.js",
+    "build-prod": "rm -rf dist && webpack --mode production --config webpack.server.config.js --display errors-only && webpack --mode production --config webpack.prod.client.config.js --display errors-only",
     "dev": "npm run build && npm start",
     "start": "node ./dist/server.js",
     "lint": "eslint **/*.js"
@@ -39,7 +39,7 @@
     "copy-webpack-plugin": "^5.1.1",
     "eslint": "^6.8.0",
     "terser-webpack-plugin": "^2.3.6",
-    "webpack": "^4.42.1",
+    "webpack": "^4",
     "webpack-cli": "^3.3.11",
     "webpack-dev-middleware": "^3.7.2",
     "webpack-node-externals": "^1.7.2"
