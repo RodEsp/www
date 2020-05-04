@@ -7,9 +7,6 @@ image: docker:latest
 services:
   - docker:dind
 
-variables:
-  MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
-
 build-image:
   image: node:12
   stage: build
@@ -21,8 +18,6 @@ build-image:
 deploy_production:
   stage: deploy
   environment: { name: 'Production' }
-  only:
-  - master
   script:
   - docker tag rodesp/www us.gcr.io/rodesp-kubernetes-cluster/rodesp/www:$CI_COMMIT_TAG
   - docker push us.gcr.io/rodesp-kubernetes-cluster/rodesp/www:$CI_COMMIT_TAG
