@@ -7,6 +7,9 @@ before_script:
 
 image: docker:latest
 
+services:
+  - docker:dind
+
 build-push-image:
   stage: build
   script:
