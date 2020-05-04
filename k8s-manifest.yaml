@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rodesp-www
+  namespace: default
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    run: rodesp-www
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rodesp-www
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      run: rodesp-www
+  template:
+    metadata:
+      labels:
+        run: rodesp-www
+    spec:
+      containers:
+      - image: us.gcr.io/rodesp-kubernetes-cluster/rodesp/www:0.1.0
+        imagePullPolicy: IfNotPresent
+        name: rodesp-www
+        ports:
+        - containerPort: 8080
+          protocol: TCP
