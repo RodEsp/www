@@ -2,21 +2,26 @@ workflow:
   rules:
     - if: $CI_COMMIT_TAG
 
-before_script:
-  - echo "$GCP_SERVICE_ACCOUNT" | base64 -d >> "$HOME/kf.json"
-  - ls $HOME
+image: docker:stable
 
-image: docker:latest
+variables:
+  DOCKER_TLS_CERTDIR: "/certs"
 
 services:
   - docker:dind
 
-build-push-image:
+before_script:
+  - docker info
+
+build:
   stage: build
   script:
     - docker build -t rodesp/www .
     - docker tag rodesp/www us.gcr.io/rodesp-kubernetes-cluster/rodesp/www:$CI_COMMIT_TAG
-    - cat $HOME/kf.json | docker login -u _json_key --password-stdin https://us.gcr.io
+    - echo "$GCP_SERVICE_ACCOUNT" | base64 -d | docker login -u _json_key --password-stdin https://us.gcr.io
     - docker push us.gcr.io/rodesp-kubernetes-cluster/rodesp/www:$CI_COMMIT_TAG
   artifacts:
     expire_in: 1 day
+
+after_script:
+  - rm /root/.docker/config.json
