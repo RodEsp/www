@@ -14,7 +14,7 @@ build-image:
   stage: build
   script:
     - mkdir -p "$MOUNT_POINT"
-    - docker build -v "$MOUNT_POINT":/mnt -t rodesp/www .
+    - docker build -t rodesp/www .
   artifacts:
     expire_in: 1 day
 
