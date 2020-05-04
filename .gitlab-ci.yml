@@ -4,14 +4,17 @@ workflow:
 
 image: docker:latest
 
+variables:
+  MOUNT_POINT: /builds/#CI_PROJECT_PATH/mnt
+
 services:
   - docker:dind
 
 build-image:
-  image: node:12
   stage: build
   script:
-    - docker build -t rodesp/www .
+    - mkdir -p "$MOUNT_POINT"
+    - docker build -v "$MOUNT_POINT":/mnt -t rodesp/www .
   artifacts:
     expire_in: 1 day
 
