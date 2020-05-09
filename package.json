@@ -16,9 +16,9 @@
     "node": ">=12.0.0"
   },
   "scripts": {
-    "build": "rm -rf dist && webpack --mode development --config webpack.server.config.js && webpack --mode development --config webpack.dev.client.config.js",
-    "build-prod": "rm -rf dist && webpack --mode production --config webpack.server.config.js --display errors-only && webpack --mode production --config webpack.prod.client.config.js --display errors-only",
-    "dev": "npm run build && npm start",
+    "build-dev": "rm -rf dist && webpack --mode development --config webpack.server.config.js && webpack --config webpack.dev.client.config.js",
+    "build-prod": "rm -rf dist && webpack --mode production --config webpack.server.config.js --display errors-only && webpack --config webpack.prod.client.config.js --display errors-only",
+    "dev": "npm run build-dev && npm start",
     "start": "node ./dist/server.js",
     "lint": "eslint **/*.js"
   },

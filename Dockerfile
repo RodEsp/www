@@ -16,5 +16,5 @@ COPY package*.json ./
 RUN npm install --production
 COPY --from=build /build/dist ./
 
-EXPOSE 8080
+EXPOSE 80
 ENTRYPOINT [ "node", "server.js" ]

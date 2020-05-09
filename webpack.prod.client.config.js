@@ -4,8 +4,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
 	entry: {
-		index: './src/client/js/index.js',
-		lastoasiscraftinggraph: './src/client/projects/lastoasis/lastoasiscraftinggraph.js'
+		index: './src/client/js/index.js'
 	},
 	mode: 'production',
 	module: {

@@ -4,7 +4,7 @@ import express from 'express';
 
 const app = express();
 
-const PORT = process.env.PORT || 8080;
+const PORT = 80;
 
 app.use(express.static('public'));
 
@@ -13,5 +13,5 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-	console.log(`App listening to ${PORT}....`);
+	console.log(`Server is running on port ${PORT}....`);
 });

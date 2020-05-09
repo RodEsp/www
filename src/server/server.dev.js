@@ -4,7 +4,7 @@ import webpackDevMiddleware from 'webpack-dev-middleware';
 
 import webpackDevClientConfig from '../../webpack.dev.client.config';
 
-const PORT = process.env.PORT || 8080;
+const PORT = 8080;
 
 const compiler = webpack(webpackDevClientConfig);
 const app = express();
@@ -18,5 +18,5 @@ app.use(express.static('dist/public'));
 
 app.listen(PORT, () => {
 	console.log('Dev Server Started');
-	console.log(`App listening to ${PORT}....`);
+	console.log(`Server is running on port ${PORT}....`);
 });
