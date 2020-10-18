@@ -16,10 +16,10 @@ before_script:
 build:
   stage: build
   script:
-    - docker build -t rodesp/www .
-    - docker tag rodesp/www us.gcr.io/rodesp-kubernetes-cluster/rodesp/www:$CI_COMMIT_TAG
-    - echo "$GCP_SERVICE_ACCOUNT" | base64 -d | docker login -u _json_key --password-stdin https://us.gcr.io
-    - docker push us.gcr.io/rodesp-kubernetes-cluster/rodesp/www:$CI_COMMIT_TAG
+    - docker build -t rodesp7/www .
+    - docker tag rodesp7/www rodesp7/www:$CI_COMMIT_TAG
+    - echo "$DockerHub_AccessToken" | docker login -u rodesp7 --password-stdin
+    - docker push rodesp7/www:$CI_COMMIT_TAG
   artifacts:
     expire_in: 1 day
 

@@ -20,7 +20,7 @@ npm run dev
 > Will be accessible on port `80`.
 
 ```sh
-npm run build-prod
+npm run build:prod
 npm start
 ```
 
@@ -29,12 +29,12 @@ npm start
 
 ### Build
 ```sh
-docker build -t rodesp/www .
+docker build -t rodesp7/www .
 ```
 
 ### Run
 ```sh
-docker run --name rodesp-www --rm -p 80:80 rodesp/www
+docker run --name rodesp-www --rm -p 80:80 rodesp7/www
 ```
 
 ### Stop

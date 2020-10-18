@@ -22,13 +22,14 @@ module.exports = {
 		filename: '[name].js'
 	},
 	plugins: [
-		new CopyPlugin([{ 
-			from: 'src/client', 
-			to: '../', 
-			ignore: ['*.js']
-		}]),
+		new CopyPlugin({
+			patterns: [{
+				from: 'src/client',
+				to: '../',
+				globOptions: { ignore: ['*.js'] }
+			}]
+		}),
 		new TerserPlugin({
-			cache: true,
 			parallel: true
 		})
 	],

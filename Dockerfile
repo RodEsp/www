@@ -5,7 +5,7 @@ WORKDIR /build
 COPY . .
 
 RUN npm install
-RUN npm run build-prod
+RUN npm run build:prod
 
 FROM node:lts-alpine
 ENV NODE_ENV=production
@@ -13,7 +13,7 @@ ENV NODE_ENV=production
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install --production
+RUN npm ci --production
 COPY --from=build /build/dist ./
 
 EXPOSE 80
