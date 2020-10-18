@@ -26,7 +26,7 @@ module.exports = {
 			patterns: [{
 				from: 'src/client',
 				to: '../',
-				globOptions: { ignore: ['*.js'] }
+				globOptions: { ignore: ['**/*.js'] }
 			}]
 		}),
 		new TerserPlugin({
