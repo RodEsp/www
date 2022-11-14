@@ -8,8 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: github.ref
-        runs: echo ${{ github.ref }}
+        run: echo ${{ github.ref }}
       - name: github.ref_name
-        runs: echo ${{ github.ref_name }}
+        run: echo ${{ github.ref_name }}
       - name: github.ref_type
-        runs: echo ${{ github.github.ref_type }}
+        run: echo ${{ github.github.ref_type }}
