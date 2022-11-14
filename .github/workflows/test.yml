@@ -1,0 +1,15 @@
+name: Test on release published
+on:
+  release:
+    types: [published]
+
+jobs:
+  print-github-refs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: github.ref
+        runs: echo ${{ github.ref }}
+      - name: github.ref_name
+        runs: echo ${{ github.ref_name }}
+      - name: github.ref_type
+        runs: echo ${{ github.github.ref_type }}
