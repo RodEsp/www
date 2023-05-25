@@ -1,0 +1,28 @@
+name: Build Static Site & Publish Docker Image
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  # build_site:
+  #   runs-on: ubuntu-latest
+  #   steps: 
+  #     - uses: actions/checkout@v3
+  build_image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: NPM Install
+        run: npm install
+      - name: Build Static Site
+        run: npm run build:prod
+      - name: Get Version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(node -p -e "require('./package.json').version")
+      - name: Docker Build
+        run: docker build . --file Dockerfile --tag rodesp7/blog:${{ steps.get_version.outputs.VERSION }}
+      - name: Docker Push
+        run: docker push rodesp7/blog:${{ steps.get_version.outputs.VERSION }}
