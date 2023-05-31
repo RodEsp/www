@@ -17,8 +17,8 @@
   },
   "main": "js/main.js",
   "scripts": {
-    "build:dev": "rm -rf dist && webpack --mode development --config webpack.server.config.js && webpack --config webpack.dev.client.config.js",
-    "build:prod": "rm -rf dist && webpack --mode production --config webpack.server.config.js && webpack --config webpack.prod.client.config.js",
+    "build:dev": "shx rm -rf dist && webpack --mode development --config webpack.server.config.js && webpack --config webpack.dev.client.config.js",
+    "build:prod": "shx rm -rf dist && webpack --mode production --config webpack.server.config.js && webpack --config webpack.prod.client.config.js",
     "dev": "npm run build:dev && npm start",
     "start": "node ./dist/server.js",
     "lint": "eslint **/*.js"
@@ -32,10 +32,11 @@
     "babel-loader": "^8.1.0",
     "copy-webpack-plugin": "^6.2.1",
     "eslint": "^7.11.0",
+    "shx": "^0.3.4",
     "terser-webpack-plugin": "^5.0.0",
-    "webpack": "^5",
-    "webpack-cli": "^4.0.0",
-    "webpack-dev-middleware": "^3.7.2",
+    "webpack": "^5.84.1",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-middleware": "^3.7.3",
     "webpack-node-externals": "^2.5.2"
   }
 }
