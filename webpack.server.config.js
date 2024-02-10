@@ -1,34 +1,34 @@
-const path = require('path');
-const nodeExternals = require('webpack-node-externals');
+import path from 'path';
+import nodeExternals from 'webpack-node-externals';
 
-module.exports = (env, argv) => {
-	const SERVER_PATH = (argv.mode === 'production') ? './src/server/server.js' : './src/server/server.dev.js';
+export default (env, argv) => {
+	const SERVER_PATH =
+    argv.mode === 'production'
+    	? './src/server/server.js'
+    	: './src/server/server.dev.js';
 
-	return ({
+	return {
 		entry: {
 			server: SERVER_PATH,
 		},
 		output: {
-			path: path.join(__dirname, 'dist'),
+			path: path.resolve(path.dirname(''), 'dist'),
 			publicPath: '/',
-			filename: 'server.js'
+			filename: 'server.cjs',
 		},
 		target: 'node',
 		node: {
 			// Need this when working with express, otherwise the build fails
 			__dirname: false,
-			__filename: false
+			__filename: false,
 		},
 		externals: [nodeExternals()], // Need this to avoid error when working with Express
 		module: {
-			rules: [{
-				// Transpiles ES6-8 into ES5
-				test: /\.js$/,
-				exclude: /node_modules/,
-				use: {
-					loader: 'babel-loader'
-				}
-			}]
-		}
-	});
+			rules: [
+				{
+					exclude: /node_modules/,
+				},
+			],
+		},
+	};
 };

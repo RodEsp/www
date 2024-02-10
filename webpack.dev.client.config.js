@@ -1,10 +1,10 @@
-const path = require('path');
-const CopyPlugin = require('copy-webpack-plugin');
+import path from 'path';
+import CopyPlugin from 'copy-webpack-plugin';
 
-module.exports = {
+export default {
 	devtool: 'source-map',
 	entry: {
-		index: './src/client/js/index.js'
+		index: './src/client/js/index.js',
 	},
 	mode: 'development',
 	module: {
@@ -12,23 +12,24 @@ module.exports = {
 			{
 				test: /\.js$/,
 				exclude: /node_modules/,
-				loader: 'babel-loader',
-			}
-		]
+			},
+		],
 	},
 	output: {
 		path: path.join(process.cwd(), 'dist/public/js'),
 		publicPath: '/',
-		filename: '[name].js'
+		filename: '[name].js',
 	},
 	plugins: [
 		new CopyPlugin({
-			patterns: [{
-				from: 'src/client',
-				to: '../',
-				globOptions: { ignore: ['**/*.js'] }
-			}]
+			patterns: [
+				{
+					from: 'src/client',
+					to: '../',
+					globOptions: { ignore: ['**/*.js'] },
+				},
+			],
 		}),
 	],
-	target: 'web'
+	target: 'web',
 };

@@ -50,7 +50,18 @@
         </div>
 
         <div id="contact" class="section">
-            <pre>-------   Under Development   -------</pre>
+            <form id="emailForm">
+                <h2>Send me an email!</h2>
+                <label for="contact_name">Name:</label>
+                <input type="text" id="contact_name" required>
+                <label for="contact_email">Email:</label>
+                <input type="email" id="contact_email" required>
+                <label for="contact_subject">Subject:</label>
+                <input type="text" id="contact_subject" required>
+                <label for="contact_message">Message:</label>
+                <textarea id="contact_message" required></textarea>
+                <button type="submit">Send Message</button>
+              </form>
         </div>
     </div>
 

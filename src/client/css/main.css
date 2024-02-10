@@ -80,6 +80,10 @@ body {
 }
 
 .section {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-content: center;
     color: #FFFFFF;
     width: 100%;
     opacity: 0;
@@ -100,4 +104,22 @@ body {
 
 .appearTransparent {
     opacity: 1;
+}
+
+#emailForm {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    padding: 10px 0px 30px 0px;
+}
+
+#emailForm > button {
+    margin-top: 10px;
+}
+
+textarea#contact_message {
+    width: 30vw;
+    height: 20vh;
+    min-width: 100%;
+    min-width: -webkit-fill-available;
 }

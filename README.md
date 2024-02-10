@@ -28,8 +28,9 @@ npm start
 > This will build & run as if for production.
 
 ### Build
+> You will need to have the EMAIL_ENDPOINT environment variable set to a URL that can accept POST requests with JSON data.
 ```sh
-docker build -t rodesp7/www .
+docker build -t rodesp7/www . --build-arg ee=$EMAIL_ENDPOINT
 ```
 
 ### Run

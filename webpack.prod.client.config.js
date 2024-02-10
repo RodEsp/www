@@ -1,10 +1,10 @@
-const path = require('path');
-const CopyPlugin = require('copy-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
+import path from 'path';
+import CopyPlugin from 'copy-webpack-plugin';
+import TerserPlugin from 'terser-webpack-plugin';
 
-module.exports = {
+export default {
 	entry: {
-		index: './src/client/js/index.js'
+		index: './src/client/js/index.js',
 	},
 	mode: 'production',
 	module: {
@@ -12,26 +12,27 @@ module.exports = {
 			{
 				test: /\.js$/,
 				exclude: /node_modules/,
-				loader: 'babel-loader',
-			}
-		]
+			},
+		],
 	},
 	output: {
 		path: path.join(process.cwd(), 'dist/public/js'),
 		publicPath: '/',
-		filename: '[name].js'
+		filename: '[name].js',
 	},
 	plugins: [
 		new CopyPlugin({
-			patterns: [{
-				from: 'src/client',
-				to: '../',
-				globOptions: { ignore: ['**/*.js'] }
-			}]
+			patterns: [
+				{
+					from: 'src/client',
+					to: '../',
+					globOptions: { ignore: ['**/*.js'] },
+				},
+			],
 		}),
 		new TerserPlugin({
-			parallel: true
-		})
+			parallel: true,
+		}),
 	],
-	target: 'web'
+	target: 'web',
 };
