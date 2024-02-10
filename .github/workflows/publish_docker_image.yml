@@ -15,7 +15,7 @@ jobs:
         id: get_version
         run: echo ::set-output name=VERSION::$(node -p -e "require('./package.json').version")
       - name: Docker Build
-        run: docker build . --file Dockerfile --tag rodesp7/www:${{ steps.get_version.outputs.VERSION }} --build-arg= ee=${{ secrets.EMAIL_ENDPOINT }} 
+        run: docker build . --file Dockerfile --tag rodesp7/www:${{ steps.get_version.outputs.VERSION }} --build-arg ee=${{ secrets.EMAIL_ENDPOINT }} 
       - name: Docker Auth
         env:
           DHAT: ${{ secrets.DOCKERHUB_ACCESSTOKEN }}
